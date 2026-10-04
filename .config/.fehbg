@@ -1,0 +1,2 @@
+#!/bin/sh
+feh --no-fehbg --bg-fill '/data/data/com.termux/files/home/wellpaper/Untitled15_20260420175146.png' 

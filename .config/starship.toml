@@ -1,0 +1,147 @@
+
+
+format = """
+[](fg:#1d2021)\
+$os\
+[](bg:#3c3836 fg:#1d2021)\
+$directory\
+[](fg:#3c3836 bg:#504945)\
+$git_branch\
+$git_status\
+[](fg:#504945 bg:#665c54)\
+$cmd_duration\
+$jobs\
+[](fg:#665c54)\
+$fill\
+$line_break\
+$status\
+$character"""
+
+add_newline = true
+
+
+[os]
+disabled = false
+style = "bg:#f9bd2f fg:#2b2b2a bold"
+format = "[ $symbol ]($style)"
+
+[os.symbols]
+Android = "󰀲"
+Linux   = ""
+Unknown = ""
+
+
+[username]
+show_always = true
+style_user  = "bg:#1d2021 fg:#a89984"
+style_root  = "bg:#1d2021 fg:#fb4934 bold"
+format      = "[$user ]($style)"
+disabled    = false
+
+
+[directory]
+style            = "bg:#3c3836 fg:#fabd2f bold"
+format           = "[ $path ]($style)"
+truncation_length = 3
+truncate_to_repo  = true
+read_only         = " 󰌾"
+read_only_style   = "bg:#3c3836 fg:#fb4934"
+
+[directory.substitutions]
+"~"                = "󱂵 home"
+"/storage/emulated/0" = "󰗮 sdcard"
+"/data/data/com.termux/files" = "󰀲 termux"
+
+
+[git_branch]
+symbol            = " "
+style             = "bg:#504945 fg:#b8bb26"
+format            = "[ $symbol$branch ]($style)"
+truncation_length = 20
+truncation_symbol = "…"
+
+
+[git_status]
+style      = "bg:#504945 fg:#928374"
+format     = "[$all_status$ahead_behind ]($style)"
+conflicted = "[!](bg:#504945 fg:#fb4934)"
+ahead      = "[⇡$count](bg:#504945 fg:#b8bb26)"
+behind     = "[⇣$count](bg:#504945 fg:#fe8019)"
+diverged   = "[⇕ ⇡$ahead_count⇣$behind_count](bg:#504945 fg:#fb4934)"
+untracked  = "[?](bg:#504945 fg:#83a598)"
+stashed    = "[$](bg:#504945 fg:#d3869b)"
+modified   = "[~$count](bg:#504945 fg:#fabd2f)"
+staged     = "[+$count](bg:#504945 fg:#b8bb26)"
+renamed    = "[»](bg:#504945 fg:#83a598)"
+deleted    = "[✘$count](bg:#504945 fg:#fb4934)"
+
+
+[cmd_duration]
+min_time          = 1_500
+style             = "bg:#665c54 fg:#a89984"
+format            = "[ 󱎫 $duration ]($style)"
+show_milliseconds = false
+
+
+[jobs]
+style          = "bg:#665c54 fg:#fe8019"
+format         = "[ 󰒓 $number ]($style)"
+number_threshold = 1
+symbol_threshold = 1
+
+
+[fill]
+symbol = " "
+style  = "fg:#3c3836"
+
+[nodejs]
+disabled = true
+
+[rust]
+disabled = true
+
+[python]
+disabled = true
+
+[java]
+disabled = true
+
+
+[character]
+success_symbol = "[╰─❯](bold fg:#b8bb26)"
+error_symbol   = "[╰─❯](bold fg:#fb4934)"
+vimcmd_symbol  = "[╰─❮](bold fg:#83a598)"
+
+
+[status]
+disabled         = false
+style            = "fg:#fb4934"
+format           = "[$symbol$status ]($style)"
+symbol           = "󰅖 "
+success_symbol   = ""
+not_executable_symbol = "󰂭 "
+not_found_symbol = "󰍉 "
+sigint_symbol    = "󱐋 "
+signal_symbol    = "󱐋 "
+map_symbol       = true
+
+
+[package]
+disabled = true
+
+[aws]
+disabled = true
+
+[gcloud]
+disabled = true
+
+[azure]
+disabled = true
+
+[terraform]
+disabled = true
+
+[time]
+disabled = true
+
+

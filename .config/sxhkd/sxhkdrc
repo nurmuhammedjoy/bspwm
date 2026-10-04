@@ -1,0 +1,200 @@
+# sxhkdrc - bspwm keybindings, ported from ~/.config/i3/config
+#
+# SYNTAX NOTES for sxhkd 0.6.3 on Termux:
+#   * No `bindsym` keyword. A hotkey line is just "MODIFIER + KEYSYM".
+#   * 0.6.3 has no modes, so i3's modal `resize` mode cannot be reproduced.
+#     See RESIZE below.
+#   * "{a,b}" expansion yields separate words, so it cannot positionally map
+#     one hotkey onto bspc arguments. Every binding is written out.
+#
+# $mod in the i3 config is Mod1 (Alt). All keysyms are kept identical.
+
+# launchers
+alt + Return
+    st
+# alt + e  ->  thunar   (needs: pkg install thunar)
+
+alt + space
+    rofi -modi drun -show drun
+
+alt + c
+    ~/.config/mpv/mpv-rofi-control.sh
+alt + x
+    ~/.config/mpv/mpv-rofi-music.sh
+
+# windows
+alt + q
+    bspc node -c
+
+# Focus on vim keys (i3 used j/k/l/semicolon; i3's alt+h is taken by split)
+alt + j
+    bspc node -f west
+alt + k
+    bspc node -f south
+alt + l
+    bspc node -f north
+alt + semicolon
+    bspc node -f east
+
+# Focus on arrows
+alt + Left
+    bspc node -f west
+alt + Down
+    bspc node -f south
+alt + Up
+    bspc node -f north
+alt + Right
+    bspc node -f east
+
+# Move on vim keys. bspc `node -d` means --to-desktop, so moving a window
+# in a direction is a swap with the neighbour (`node -s`).
+alt + shift + j
+    bspc node -s west
+alt + shift + k
+    bspc node -s south
+alt + shift + l
+    bspc node -s north
+alt + shift + semicolon
+    bspc node -s east
+
+# Move on arrows
+alt + shift + Left
+    bspc node -s west
+alt + shift + Down
+    bspc node -s south
+alt + shift + Up
+    bspc node -s north
+alt + shift + Right
+    bspc node -s east
+
+# splits
+# bspwm 0.9.12 does not split on `node -f <dir>` into an empty edge, so
+# preselect instead: the next opened window is placed and focused there.
+# Closest equivalent to i3's `split h` / `split v`:
+#   i3 "split h" = new window below  ->  presel south
+#   i3 "split v" = new window beside ->  presel east
+alt + h
+    bspc node -p south
+alt + v
+    bspc node -p east
+
+# cancel a pending split preselection
+alt + shift + h
+    bspc node -p cancel
+
+# layouts
+# i3: fullscreen toggle. `node -t fullscreen` only sets the state; the
+# leading ~ makes it toggle back. The backslash matters: sxhkd runs via
+# $SHELL (zsh here), which would expand a bare leading ~ as a home path.
+alt + f
+    bspc node -t \~fullscreen
+
+# i3: layout tabbed. bspwm has no tabbed layout; monocle is the closest
+# equivalent (one window fills the screen).
+alt + w
+    bspc desktop -l monocle
+
+# i3: layout toggle split. Returning the window to the tiling tree is
+# the closest equivalent.
+alt + s
+    bspc node -t tiled
+
+# i3: floating toggle
+alt + shift + space
+    bspc node -t \~floating
+
+# i3 had this on both alt+shift+t (mode_toggle) and alt+a (parent)
+alt + shift + t
+    bspc node -f @parent
+alt + a
+    bspc node -f @parent
+
+# RESIZE
+# i3 bound alt+r to a modal resize mode; sxhkd 0.6.3 has no modes, so the
+# same four operations are bound directly to alt+ctrl (i3 used 10px steps):
+#   j = shrink width, k = grow height, l = shrink height, ; = grow width
+alt + ctrl + j
+    bspc node -z left 20 0
+alt + ctrl + k
+    bspc node -z bottom 0 -20
+alt + ctrl + l
+    bspc node -z bottom 0 20
+alt + ctrl + semicolon
+    bspc node -z right 20 0
+alt + ctrl + Left
+    bspc node -z left 20 0
+alt + ctrl + Down
+    bspc node -z bottom 0 -20
+alt + ctrl + Up
+    bspc node -z bottom 0 20
+alt + ctrl + Right
+    bspc node -z right 20 0
+
+# workspaces
+alt + 1
+    bspc desktop -f 1
+alt + 2
+    bspc desktop -f 2
+alt + 3
+    bspc desktop -f 3
+alt + 4
+    bspc desktop -f 4
+alt + 5
+    bspc desktop -f 5
+alt + 6
+    bspc desktop -f 6
+alt + 7
+    bspc desktop -f 7
+alt + 8
+    bspc desktop -f 8
+alt + 9
+    bspc desktop -f 9
+alt + 0
+    bspc desktop -f 10
+
+alt + shift + 1
+    bspc node -d 1 --follow
+alt + shift + 2
+    bspc node -d 2 --follow
+alt + shift + 3
+    bspc node -d 3 --follow
+alt + shift + 4
+    bspc node -d 4 --follow
+alt + shift + 5
+    bspc node -d 5 --follow
+alt + shift + 6
+    bspc node -d 6 --follow
+alt + shift + 7
+    bspc node -d 7 --follow
+alt + shift + 8
+    bspc node -d 8 --follow
+alt + shift + 9
+    bspc node -d 9 --follow
+alt + shift + 0
+    bspc node -d 10 --follow
+
+# wm
+# reload bspwmrc and sxhkdrc
+alt + shift + z
+    bspc wm -r; pkill -USR1 -x sxhkd
+
+# restart bspwm
+alt + shift + r
+    bspc quit; sleep 1; setsid bspwm >/dev/null 2>&1 &
+
+# reload sxhkdrc only
+alt + Escape
+    pkill -USR1 -x sxhkd
+
+# mpc
+# requires: pkg install mpc libnotify
+# alt + shift + p
+#     mpc toggle
+# alt + shift + n
+#     mpc next
+# alt + shift + b
+#     mpc prev
+# alt + shift + s
+#     mpc stop
+# alt + shift + i
+#     notify-send "Now Playing" "$(mpc current)"

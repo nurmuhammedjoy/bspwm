@@ -1,0 +1,157 @@
+#!/data/data/com.termux/files/usr/bin/bash
+GOLD=$'\033[38;2;255;215;0m'
+RESET=$'\033[0m'
+ascii_logo=(
+"⣇⣿⠘⣿⣿⣿⡿⡿⣟⣟⢟⢟⢝⠵⡝⣿⡿⢂⣼⣿⣷⣌⠩⡫⡻⣝⠹⢿⣿⣷"
+"⡆⣿⣆⠱⣝⡵⣝⢅⠙⣿⢕⢕⢕⢕⢝⣥⢒⠅⣿⣿⣿⡿⣳⣌⠪⡪⣡⢑⢝⣇"
+"⡆⣿⣿⣦⠹⣳⣳⣕⢅⠈⢗⢕⢕⢕⢕⢕⢈⢆⠟⠋⠉⠁⠉⠉⠁⠈⠼⢐⢕⢽"
+"⡗⢰⣶⣶⣦⣝⢝⢕⢕⠅⡆⢕⢕⢕⢕⢕⣴⠏⣠⡶⠛⡉⡉⡛⢶⣦⡀⠐⣕⢕"
+"⡝⡄⢻⢟⣿⣿⣷⣕⣕⣅⣿⣔⣕⣵⣵⣿⣿⢠⣿⢠⣮⡈⣌⠨⠅⠹⣷⡀⢱⢕"
+"⡝⡵⠟⠈⢀⣀⣀⡀⠉⢿⣿⣿⣿⣿⣿⣿⣿⣼⣿⢈⡋⠴⢿⡟⣡⡇⣿⡇⡀⢕"
+"⡝⠁⣠⣾⠟⡉⡉⡉⠻⣦⣻⣿⣿⣿⣿⣿⣿⣿⣿⣧⠸⣿⣦⣥⣿⡇⡿⣰⢗⢄"
+"⠁⢰⣿⡏⣴⣌⠈⣌⠡⠈⢻⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣬⣉⣉⣁⣄⢖⢕⢕⢕"
+"⡀⢻⣿⡇⢙⠁⠴⢿⡟⣡⡆⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣷⣵⣵⣿"
+"⡻⣄⣻⣿⣌⠘⢿⣷⣥⣿⠇⣿⣿⣿⣿⣿⣿⠛⠻⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿"
+"⣷⢄⠻⣿⣟⠿⠦⠍⠉⣡⣾⣿⣿⣿⣿⣿⣿⢸⣿⣦⠙⣿⣿⣿⣿⣿⣿⣿⣿⠟"
+"⡕⡑⣑⣈⣻⢗⢟⢞⢝⣻⣿⣿⣿⣿⣿⣿⣿⠸⣿⠿⠃⣿⣿⣿⣿⣿⣿⡿⠁⣠"
+"⡝⡵⡈⢟⢕⢕⢕⢕⣵⣿⣿⣿⣿⣿⣿⣿⣿⣿⣶⣶⣿⣿⣿⣿⣿⠿⠋⣀⣈⠙"
+"⡝⡵⡕⡀⠑⠳⠿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⠿⠛⢉⡠⡲⡫⡪⡪⡣"
+)
+r="\033[0m"
+b="\033[1m"
+fg="\033[38;2;235;219;178m"
+dim="\033[38;2;102;92;84m"
+
+kc=(
+    "\033[38;2;250;189;47m"
+    "\033[38;2;246;174;45m"
+    "\033[38;2;230;162;48m"
+    "\033[38;2;210;150;60m"
+    "\033[38;2;190;175;100m"
+    "\033[38;2;168;175;120m"
+    "\033[38;2;148;172;120m"
+    "\033[38;2;130;165;110m"
+    "\033[38;2;142;192;124m"
+    "\033[38;2;142;192;124m"
+    "\033[38;2;148;172;120m"
+    "\033[38;2;168;175;100m"
+    "\033[38;2;190;160;80m"
+    "\033[38;2;210;150;60m"
+)
+
+dot="${dim}:${r}"
+
+key() {
+    local i="$1" label="$2" value="$3"
+    local c="${kc[$i]:-${kc[0]}}"
+    printf "${b}${c}%-8s${r} ${dot} ${fg}%s${r}" "$label" "$value"
+}
+
+
+_battery_file=$(mktemp)
+_weather_file=$(mktemp)
+_memory_file=$(mktemp)
+
+# Battery 
+{ termux-battery-status 2>/dev/null | jq -r '.percentage | "\(.)%"' > "$_battery_file"; } &
+_pid_battery=$!
+
+# Weather 
+{
+    raw=$(curl -s --max-time 5 "wttr.in/Dhaka?format=%C|%t" 2>/dev/null)
+    if [[ -n "$raw" ]]; then
+        cond=$(echo "$raw" | cut -d'|' -f1 | tr '[:upper:]' '[:lower:]' | xargs)
+        temp=$(echo "$raw" | cut -d'|' -f2 | sed 's/+//' | xargs)
+        case "$cond" in
+            *clear*|*sunny*)           icon="" ;;
+            *partly*|*cloud*)          icon="󰅟" ;;
+            *rain*|*drizzle*|*shower*) icon="" ;;
+            *thunder*)                 icon="" ;;
+            *fog*|*haze*)              icon="󰖑" ;;
+            *)                         icon="UNKNOWN ICON" ;;
+        esac
+        echo "$icon ${temp:-N/A}" > "$_weather_file"
+    else
+        echo "N/A" > "$_weather_file"
+    fi
+} &
+_pid_weather=$!
+
+{ free -m 2>/dev/null | awk 'NR==2{printf "%sMiB / %sMiB\n", $3, $2}' > "$_memory_file"; } &
+_pid_memory=$!
+
+
+OS=$(getprop ro.build.version.release 2>/dev/null)
+kernel=$(uname -r | cut -c1-7)
+Model=$(getprop ro.product.marketname 2>/dev/null)
+dpi=$(getprop ro.sf.lcd_density 2>/dev/null)
+
+font=$(fc-scan ~/.termux/font.ttf 2>/dev/null | grep "family:" | head -n1 | sed 's/.*"\(.*\)".*/\1/')
+[[ -z "$font" ]] && font="Default"
+
+theme=$(grep "gtk-theme-name" ~/.config/gtk-3.0/settings.ini 2>/dev/null | awk -F'=' '{print $2}' | xargs)
+[[ -z "$theme" ]] && theme="N/A"
+
+uptime=$(uptime -p 2>/dev/null | awk '
+{
+    d=h=m=0
+    for(i=1;i<=NF;i++){
+        if($i=="days,"||$i=="day,")     d=$(i-1)
+        if($i=="hours,"||$i=="hour,")   h=$(i-1)
+        if($i=="minutes"||$i=="minute") m=$(i-1)
+    }
+    printf "%dd %dh %dm\n", d, h, m
+}')
+
+
+wait "$_pid_battery" 2>/dev/null
+battery=$(cat "$_battery_file")
+[[ -z "$battery" ]] && battery="N/A"
+
+wait "$_pid_weather" 2>/dev/null
+weather_out=$(cat "$_weather_file")
+[[ -z "$weather_out" ]] && weather_out="N/A"
+
+wait "$_pid_memory" 2>/dev/null
+memory=$(cat "$_memory_file")
+[[ -z "$memory" ]] && memory="N/A"
+
+rm -f "$_battery_file" "$_weather_file" "$_memory_file"
+
+
+info_lines=(
+    "$(key 0  "os"      "Android $OS")"
+    "$(key 1  "kernel"  "Linux $kernel")"
+    "$(key 2  "host"    "$Model")"
+    "$(key 3  "cpu"     "Snapdragon 860")"
+    "$(key 4  "gpu"     "Adreno 640")"
+    "$(key 5  "memory"  "$memory")"
+    "$(key 6  "battery" "$battery")"
+    "$(key 7  "uptime"  "$uptime")"
+    ""
+    "$(key 8  "shell"   "$(basename "$SHELL")")"
+    "$(key 9  "theme"   "$theme")"
+    "$(key 10 "font"    "$font")"
+    "$(key 11 "dpi"     "$dpi")"
+    "$(key 12 "weather" "Dhaka $weather_out")"
+)
+ascii_color="\x1b[38;2;255;235;174m"
+r="\033[0m"
+
+main() {
+    clear
+    echo
+
+    local logo_width=45
+
+    for i in "${!ascii_logo[@]}"; do
+        local info="${info_lines[$i]:-}"
+        printf "${ascii_color}%-${logo_width}s${r}    %b\n" "${ascii_logo[$i]}" "$info"
+    done
+
+    echo
+}
+
+main
+
+

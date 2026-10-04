@@ -1,0 +1,133 @@
+configuration {
+    modi:                       "drun,run,filebrowser";
+    show-icons:                 false;
+    display-drun:               "";
+    display-run:                "";
+    display-filebrowser:        "📁";
+    drun-display-format:        "{name}";
+    font:                       "Hack Nerd Font 11";
+}
+
+* {
+    /* Gruvbox Dark + Material 3 Palette */
+    bg-primary:     #1d2021;
+    bg-surface:     #282828;
+    fg-primary:     #fbf1c7;
+    fg-secondary:   #928374;
+    accent:         #fabd2f; /* Pixel Amber Yellow */
+    accent-text:    #1d2021;
+    transparent:    transparent;
+
+    background-color: @transparent;
+    text-color:       @fg-primary;
+}
+
+window {
+    transparency:     "real";
+    location:         center;
+    anchor:           center;
+    fullscreen:       false;
+    width:            520px;
+    enabled:          true;
+    margin:           0px;
+    padding:          0px;
+    border:           0px solid;
+    border-radius:    28px;
+    cursor:           "default";
+    background-color: @bg-primary;
+}
+
+mainbox {
+    enabled:          true;
+    spacing:          16px;
+    margin:           0px;
+    padding:          20px;
+    background-color: transparent;
+    children:         [ "inputbar", "listview" ];
+}
+
+/* Material Search Pill */
+inputbar {
+    enabled:          true;
+    spacing:          12px;
+    margin:           0px;
+    padding:          12px 18px;
+    border-radius:    100px;
+    background-color: @bg-surface;
+    text-color:       @fg-primary;
+    children:         [ "prompt", "entry" ];
+}
+
+prompt {
+    enabled:          true;
+    background-color: transparent;
+    text-color:       @accent;
+}
+
+entry {
+    enabled:          true;
+    background-color: transparent;
+    text-color:       inherit;
+    cursor:           text;
+    placeholder:      "Search apps...";
+    placeholder-color: @fg-secondary;
+}
+
+/* App Selection List */
+listview {
+    enabled:          true;
+    columns:          1;
+    lines:            6;
+    cycle:            true;
+    dynamic:          true;
+    scrollbar:        false;
+    layout:           vertical;
+    reverse:          false;
+    fixed-height:     true;
+    fixed-columns:    true;
+    spacing:          6px;
+    margin:           0px;
+    padding:          0px;
+    background-color: transparent;
+}
+
+element {
+    enabled:          true;
+    spacing:          0px;
+    margin:           0px;
+    padding:          10px 16px;
+    border-radius:    100px;
+    background-color: transparent;
+    text-color:       @fg-primary;
+    cursor:           pointer;
+    children:         [ "element-text" ];
+}
+
+/* Unselected Items (Fixes alternating white background) */
+element normal.normal,
+element alternate.normal,
+element normal.active,
+element alternate.active,
+element normal.urgent,
+element alternate.urgent {
+    background-color: transparent;
+    text-color:       @fg-primary;
+}
+
+/* Selected Active Pill */
+element selected.normal,
+element selected.active,
+element selected.urgent {
+    background-color: @accent;
+    text-color:       @accent-text;
+}
+
+element-text {
+    background-color: transparent;
+    text-color:       inherit;
+    highlight:        inherit;
+    cursor:           inherit;
+    vertical-align:   0.5;
+    horizontal-align: 0.0;
+}
+

@@ -1,0 +1,25 @@
+[org/gtk/settings/file-chooser]
+window-position=(-2, 145)
+window-size=(1096, 822)
+date-format='regular'
+location-mode='path-bar'
+show-hidden=false
+show-size-column=true
+show-type-column=true
+sidebar-width=156
+sort-column='name'
+sort-directories-first=false
+sort-order='ascending'
+type-format='category'
+
+[info/febvre/Komikku]
+downloader-state=true
+color-scheme='dark'
+window-maximized-state=false
+window-size=[850, 621]
+pinned-servers=['mangadex_cs']
+night-light=true
+selected-category=0
+
+[org/gtk/settings/color-chooser]
+selected-color=(true, 0.0, 0.0, 0.0, 1.0)

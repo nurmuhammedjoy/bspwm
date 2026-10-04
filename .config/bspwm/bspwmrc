@@ -1,0 +1,67 @@
+#!/bin/sh
+# bspwm 0.9.12 config, ported from ~/.config/i3/config
+# Keybindings live in ~/.config/sxhkd/sxhkdrc
+#
+# NOTE: bspwm 0.9.12. Settings from 0.10 guides do NOT exist here and
+# are rejected with "Unknown setting": focus_new, focus_by_clicking,
+# urgent_border_color, focused_gap, per-side gaps, focused_bg_color,
+# unfocused_bg_color. The 0.9.12 equivalents are used where one exists.
+
+# desktops
+# i3 declared 10 workspaces (1-9 then 0); bspwm starts with one desktop
+# named "Desktop", so declare the ten explicitly. No `desktop -a`, it is
+# `monitor -d`.
+bspc monitor -d 1 2 3 4 5 6 7 8 9 10
+
+# appearance
+# i3: default_border pixel 0 / default_floating_border pixel 0
+bspc config border_width          0
+# i3: gaps inner 4 / gaps outer 4 (0.9.12 has a single window_gap)
+bspc config window_gap            5
+# left_padding reserves the Quickshell bar: 0.9.12 ignores
+# _NET_WM_STRUT_PARTIAL, so without it windows would tile from x=0.
+# 48 (bar) + 5 (window_gap) = 5px gap between bar and windows.
+bspc config left_padding 48
+bspc config split_ratio           0.49
+bspc config borderless_monocle    true
+bspc config gapless_monocle       true
+bspc config single_monocle        false
+bspc config remove_unplugged_monitors true
+bspc config border_radius         20
+bspc config pointer_modifier       mod1
+bspc config pointer_action1        move
+bspc config pointer_action2        resize_side
+bspc config pointer_action3        resize_corner
+
+# colours, from the i3 client.* lines
+#   client.focused          #2B2D2D #2B2D2D #ebddd2
+bspc config focused_border_color   "#ebddd2"
+#   client.unfocused        #f7f3fa
+bspc config normal_border_color    "#f7f3fa"
+#   client.focused_inactive #1F2121 #1F2121 #161819
+bspc config active_border_color    "#161819"
+# no i3 equivalent; reuses the i3 client.urgent accent
+bspc config presel_feedback_color  "#E78A4E"
+# i3: client.urgent #E78A4E - 0.9.12 has no urgent_border_color, so the
+# urgent border cannot be reproduced.
+
+# behaviour
+# i3: focus_follows_mouse yes
+bspc config focus_follows_pointer  true
+bspc config pointer_follows_focus  false
+bspc config click_to_focus         button1
+# i3: focus_on_window_activation - 0.9.12 has no focus_new, but focusing
+# new windows is the default, so nothing to set.
+# i3: floating_modifier $mod - bspwm floats per-node via `bspc node -t`
+# (alt+shift+space).
+
+# rules
+bspc rule -a '*' focus=on
+
+# autostart
+# pgrep guards so `bspc wm -r` (alt+shift+z) does not spawn duplicates.
+feh --bg-fill ~/wellpaper/default.png &
+
+pgrep -x sxhkd    >/dev/null 2>&1 || sxhkd &
+pgrep -x xcompmgr >/dev/null 2>&1 || xcompmgr -n &
+pgrep -x quickshell >/dev/null 2>&1 || quickshell &
