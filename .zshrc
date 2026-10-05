@@ -1,4 +1,3 @@
-# originally created by https://github.com/Phinixprono123
 setopt AUTO_CD INTERACTIVE_COMMENTS PRINT_EIGHT_BIT COMPLETE_IN_WORD \
        NO_BEEP NO_FLOW_CONTROL \
        SHARE_HISTORY EXTENDED_HISTORY HIST_VERIFY HIST_REDUCE_BLANKS \
@@ -42,10 +41,6 @@ ZCOMPDUMP=$_ZC/zcompdump-$ZSH_VERSION
 [[ -d $_ZC ]] || mkdir -p $_ZC
 
 # Plugin settings (must be set before the plugins load)
-ZSH_AUTOSUGGEST_BUFFER_MAX_SIZE=40
-ZSH_AUTOSUGGEST_USE_ASYNC=1
-ZSH_AUTOSUGGEST_STRATEGY=(completion)
-ZSH_AUTOSUGGEST_MANUAL_REBIND=1                 # bind once in _zsh_autosuggest_post, not every prompt
 HISTORY_SUBSTRING_SEARCH_ENSURE_UNIQUE=1
 
 # Aliases and helpers
@@ -165,13 +160,6 @@ _patina_activate() {
   eval "$(zsh-patina activate)"
 }
 
-# Start autosuggestions, then accept the suggestion with Ctrl-L
-_zsh_autosuggest_post() {
-  emulate -L zsh
-  _zsh_autosuggest_start
-  bindkey '^L' autosuggest-accept
-}
-
 # Zinit
 ZINIT_HOME="${XDG_DATA_HOME:-$HOME/.local/share}/zinit/zinit.git"
 if [[ ! -r $ZINIT_HOME/zinit.zsh ]]; then
@@ -185,9 +173,6 @@ if [[ -r $ZINIT_HOME/zinit.zsh ]]; then
   zinit ice wait'0a' lucid blockf atinit'_zsh_compinit' atpull'zinit creinstall -q .'
   zinit light zsh-users/zsh-completions
 
-  zinit ice wait'0c' lucid atload'!_zsh_autosuggest_post'
-  zinit light zsh-users/zsh-autosuggestions
-
   zinit ice wait'0c' lucid atload'_hss_bindings'
   zinit light zsh-users/zsh-history-substring-search
 
@@ -198,3 +183,9 @@ else
   autoload -Uz compinit && compinit -u -d $ZCOMPDUMP
   _zsh_late_init
 fi
+
+# IRIS
+export PATH="$HOME/go/bin:$PATH"
+eval "$(iris init zsh)"
+
+export GROQ_API_KEY="I ain't gonna give my key"

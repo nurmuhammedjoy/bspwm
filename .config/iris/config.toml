@@ -1,0 +1,58 @@
+[core]
+version = 1
+shell = ""
+shell-login = false
+mode = "last"
+debug = false
+expand-alias = true
+auto-execute = false
+atuin-history = 0
+atuin-db-path = ""
+cobra-probe-enabled = true
+navigate-closed = "history"
+
+[ui]
+style = "classic"
+ghost-text = 1
+hidden-files = true
+max-suggestions = 100
+max-height = 6
+max-width = 0
+nerd-fonts = true
+
+[keybindings]
+toggle-mode = "ctrl+r"
+toggle-menu = "shift+tab"
+select = "tab"
+navigate-up = "up"
+navigate-down = "down"
+navigate-right = "right"
+
+[git]
+filter-active-branch = true
+deduplicate-branches = true
+
+[updater]
+check-on-startup = true
+channel = "stable"
+check-interval = "24h"
+auto-update = 0
+
+[zoxide]
+extend-cd = false
+
+[ai]
+enabled = true
+provider = "groq"
+debounce_ms = 400
+
+[ai.providers.groq]
+endpoint = "https://api.groq.com/openai/v1/chat/completions"
+api_key_env = "GROQ_API_KEY"
+model = "qwen/qwen3.8-27b"
+timeout_ms = 3000
+
+[ai.providers.ollama]
+endpoint = "http://localhost:11434/v1/chat/completions"
+model = "qwen2.5-coder"
+timeout_ms = 5000
