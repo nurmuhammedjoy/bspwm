@@ -62,9 +62,11 @@ pkg install -y \
   unzip
 
 # --- dotfiles --------------------------------------------------------------
-log "Copying dotfiles to \$HOME"
-[ -d "$HOME/dots" ] || fail "\$HOME/dots not found — clone the repo there first."
-tar cf - --exclude='.git' -C "$HOME/dots" . | tar xf - -C "$HOME"
+# Copy from wherever this script lives, so the repo can be cloned anywhere
+# (e.g. as ~/dots, ~/bspwm, anything).
+DOTS_SRC="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+log "Copying dotfiles from $DOTS_SRC to \$HOME"
+tar cf - --exclude='.git' -C "$DOTS_SRC" . | tar xf - -C "$HOME"
 chmod +x "$HOME/.config/bspwm/bspwmrc" 2>/dev/null || true
 
 # --- st terminal -----------------------------------------------------------
