@@ -34,3 +34,5 @@ it kills any old termux-x11 process, starts pulseaudio, starts the x11 server on
 - `left_padding 48` in bspwmrc is there to make room for the quickshell bar. 0.9.12 ignores `_NET_WM_STRUT_PARTIAL` so without it windows would tile under the bar
 - borders are off (`border_width 0`), rounded corners come from `border_radius 20` + xcompmgr
 
+- **bspwm** is based on [Welpyes/bspwm](https://github.com/Welpyes/bspwm), not the normal upstream bspwm
+- **neovim** configuration is based on [nurmuhammedjoy/zenvim](https://github.com/nurmuhammedjoy/zenvim)
