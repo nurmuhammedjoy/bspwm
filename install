@@ -1,10 +1,38 @@
-pkg update && pkg upgrade 
+#!/data/data/com.termux/files/usr/bin/bash
+set -euo pipefail
 
-pkg install \
+# --- helpers ---------------------------------------------------------------
+log()  { printf '\n\033[1;34m==>\033[0m %s\n' "$*"; }
+fail() { printf '\n\033[1;31mERROR:\033[0m %s\n' "$*" >&2; exit 1; }
+
+command -v pkg >/dev/null 2>&1 || fail "pkg not found — this script is for Termux."
+
+# --- update ----------------------------------------------------------------
+log "Updating package lists and upgrading"
+pkg update -y
+pkg upgrade -y
+
+# --- repos (must be enabled BEFORE installing x11 packages) ----------------
+log "Enabling x11-repo"
+pkg install -y x11-repo
+pkg update
+
+# --- packages --------------------------------------------------------------
+log "Installing X11/WM packages"
+pkg install -y \
   bspwm \
   sxhkd \
   quickshell \
   rofi \
+  feh \
+  xcompmgr \
+  termux-x11 \
+  pulseaudio \
+  termux-api \
+  dbus
+
+log "Installing CLI tools"
+pkg install -y \
   neovim \
   tmux \
   starship \
@@ -12,20 +40,13 @@ pkg install \
   git \
   curl \
   jq \
-  feh \
-  xcompmgr \
-  pulseaudio \
-  termux-api
-
-pkg install \
   ripgrep \
   fd \
   fzf \
   tree-sitter
 
-pkg install x11-repo
-
-pkg install \
+log "Installing build dependencies"
+pkg install -y \
   clang \
   python \
   nodejs \
@@ -40,17 +61,30 @@ pkg install \
   freetype \
   unzip
 
-cd ~/dots && tar cf - --exclude='.git' . | tar xf - -C ~
+# --- dotfiles --------------------------------------------------------------
+log "Copying dotfiles to \$HOME"
+[ -d "$HOME/dots" ] || fail "\$HOME/dots not found — clone the repo there first."
+tar cf - --exclude='.git' -C "$HOME/dots" . | tar xf - -C "$HOME"
+chmod +x "$HOME/.config/bspwm/bspwmrc" 2>/dev/null || true
 
-cd ~/st-0.9.3
+# --- st terminal -----------------------------------------------------------
+log "Building st"
+cd "$HOME/st-0.9.3"
 make clean
 make
 make install
 
+# --- fonts -----------------------------------------------------------------
+log "Installing Hack Nerd Font"
 mkdir -p "$HOME/.local/share/fonts"
 curl -fL "https://github.com/ryanoasis/nerd-fonts/releases/download/v3.5.1/Hack.zip" -o "$HOME/Hack.zip"
 unzip -o "$HOME/Hack.zip" -d "$HOME/.local/share/fonts"
+rm -f "$HOME/Hack.zip"
 fc-cache -fv
 
+# --- go tools ----------------------------------------------------------------
+log "Installing iris"
 export PATH="$HOME/go/bin:$PATH"
 go install github.com/versenilvis/iris/cmd/iris@latest
+
+log "Done. Log out and back in (or run 'zsh') to pick up shell changes."
