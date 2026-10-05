@@ -1,0 +1,56 @@
+pkg update && pkg upgrade 
+
+pkg install \
+  bspwm \
+  sxhkd \
+  quickshell \
+  rofi \
+  neovim \
+  tmux \
+  starship \
+  zsh \
+  git \
+  curl \
+  jq \
+  feh \
+  xcompmgr \
+  pulseaudio \
+  termux-api
+
+pkg install \
+  ripgrep \
+  fd \
+  fzf \
+  tree-sitter
+
+pkg install x11-repo
+
+pkg install \
+  clang \
+  python \
+  nodejs \
+  golang \
+  make \
+  pkg-config \
+  ncurses-utils \
+  libx11 \
+  libxft \
+  libxrender \
+  fontconfig \
+  freetype \
+  unzip
+
+cd ~/dots && tar cf - --exclude='.git' . | tar xf - -C ~
+
+cd ~/st-0.9.3
+make clean
+make
+make install
+
+mkdir -p "$HOME/.local/share/fonts"
+curl -fL "https://github.com/ryanoasis/nerd-fonts/releases/download/v3.5.1/Hack.zip" -o "$HOME/Hack.zip"
+unzip -o "$HOME/Hack.zip" -d "$HOME/.local/share/fonts"
+fc-cache -fv
+
+export PATH="$HOME/go/bin:$PATH"
+go install github.com/versenilvis/iris/cmd/iris@latest
